@@ -1,7 +1,7 @@
 import os
 from setuptools import setup
 
-setup{
+setup(
 	name = "GetOldTweets",
 	version = "1.0.0",
 	author = "Osman Cihan Kilinc",
@@ -19,4 +19,4 @@ setup{
 		"license :: MIT"
 	],
 	install_requires =["lxml", "pyquery"],
-}
+)
