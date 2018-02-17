@@ -19,6 +19,10 @@ class TweetCriteria:
 	def setQuerySearch(self, querySearch):
 		self.querySearch = querySearch
 		return self
+	
+	def setHashtagSearch(self, hashtagSearch):
+                self.hashtagSearch = hashtagSearch
+                return self
 		
 	def setMaxTweets(self, maxTweets):
 		self.maxTweets = maxTweets

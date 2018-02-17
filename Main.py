@@ -1,6 +1,7 @@
 import sys
 if sys.version_info[0] < 3:
     import got
+    import tests
 else:
     import got3 as got
 
