@@ -12,7 +12,6 @@ setup(
 	keywords = "twitter",
 	url = "https://github.com/kilinco/GetOldTweets-python",
 	packages = ['got', 'got3'],
-	long_description = read('README'),
 	classifiers=[
 		"Development status :: 3 - Alpha",
 		"Topic :: Utilities",
@@ -20,3 +19,5 @@ setup(
 	],
 	install_requires =["lxml", "pyquery"],
 )
+
+

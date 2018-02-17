@@ -4,23 +4,32 @@ from .. import models
 from . import TweetCriteria
 from . import TweetHelper
 
-class TweetManager(object):
-	
-	def __init__(self):
-		pass
-		
-	@staticmethod
-	def getTweets(tweetCriteria, receiveBuffer=None, bufferLength=100, proxy=None):
+
+class TweetGenerator(object):
+    def __init__(self, noTweets = sys.maxint, tweetCriteria = TweetCriteria()):
+    	assert isinstance(tweetCriteria, dict)
+      	self.noTweets = noTweets
+     	self.tweetCriteria = tweetCriteria
+     	self.tweetIter = getTweetsGen(self.tweetCriteria, self.noTweets)
+    def __iter__(self):
+    	return self.tweetIter
+    def __next__(self):
+    	return self.tweetIter.next()
+    @staticmethod
+    def getTweets(tweetCriteria, noTweets, receiveBuffer=None, bufferLength=100, proxy=None):
 		'''
 		param tweetCriteria: input
 		type tweetCriteria: TweetCriteria
+		param noTweets: input
+		type noTweets: int
 
-		returns tweets that satisfy the criteria	
+		yields tweets that satisfy the criteria	
 		'''
+		assert isinstance(noTweets, int)
 		assert isinstance(tweetCriteria, TweetCriteria)
 
 		refreshCursor = ''
-	
+		
 		results = []
 		resultsAux = []
 		cookieJar = cookielib.CookieJar()
@@ -31,23 +40,29 @@ class TweetManager(object):
 		active = True
 
 		while active:
-			json = got.manager.TweetHelper.getJsonResponse(tweetCriteria, refreshCursor, cookieJar, proxy)
+			json = TweetHelper.getJsonResponse(tweetCriteria, refreshCursor, cookieJar, proxy)
 			if len(json['items_html'].strip()) == 0:
 				break
 
 			refreshCursor = json['min_position']
 			scrapedTweets = PyQuery(json['items_html'])
-			#Remove incomplete tweets withheld by Twitter Guidelines
+			# Remove incomplete tweets withheld by Twitter Guidelines
 			scrapedTweets.remove('div.withheld-tweet')
 			tweets = scrapedTweets('div.js-stream-tweet')
 			
 			if len(tweets) == 0:
 				break
+
+			while len(results) >= noTweets:
+				tmp = results[:noTweets]
+				results = results[noTweets:]
+				tweetCriteria.maxTweets = tweetCriteria.maxTweets - noTweets
+				yield tmp
 			
 			for tweetHTML in tweets:
-				
-				tweet = TweetHelper.parseTweet(tweetHTML);
 
+				tweet = TweetHelper().parseTweet(tweetHTML)
+				
 				results.append(tweet)
 				resultsAux.append(tweet)
 				
@@ -63,7 +78,8 @@ class TweetManager(object):
 		if receiveBuffer and len(resultsAux) > 0:
 			receiveBuffer(resultsAux)
 		
-		return results
-	
-	
-	
+		while len(results) >= noTweets:
+			tmp = results[:noTweets]
+			results = results[noTweets:]
+			tweetCriteria.maxTweets = tweetCriteria.maxTweets - noTweets
+			yield tmp

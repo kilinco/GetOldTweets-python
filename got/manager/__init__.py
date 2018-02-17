@@ -1,2 +1,4 @@
 from TweetCriteria import TweetCriteria
 from TweetManager import TweetManager
+from TweetGenerator import TweetGenerator
+from TweetHelper import TweetHelper
