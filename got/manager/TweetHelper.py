@@ -55,7 +55,8 @@ class TweetHelper:
 		
 		returns JSON response with data from Twitter
 		'''
-		assert isinstance(tweetCriteria, TweetCriteria)
+		assert isinstance(tweetCriteria, TweetCriteria) 
+
 
 		url = "https://twitter.com/i/search/timeline?f=tweets&q=%s&src=typd&max_position=%s"
 		
@@ -115,25 +116,37 @@ class TweetHelper:
 		
 		return dataJson
 
-	# @staticmethod
-	# def getCSV(tweets, filename):
-	# 	'''
-	# 	param tweets: input
-	# 	type tweets: list of tweets
-	# 	param filename: input
-	# 	type filename: string
+	# TODO - Will be simplified
+	@staticmethod
+	def getCSV(tweets, filename):
+		'''
+		param tweets: input
+		type tweets: list of tweets
+		param filename: input
+		type filename: string
 		
-	# 	creates a CSV file of tweets
-	# 	'''
-	# 	assert isinstance(tweets, list)
-	# 	assert isinstance(filename, str)
-	# 	with open(filename, 'w') as csvfile:
-	# 		fieldnames = ['username', 'text', 'date', 'mentions', 'hashtags', 'geo', 'retweets', 'favorites', 'id', 'permalink']
-	# 		writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=',', lineterminator='\n')
-	# 		writer.writeheader()
-	# 	    for i in range(len(tweets)):
-	# 	    	d = {'date':tweets[i].date, 'text':tweets[i].text, 'id':tweets[i].id, 'username':tweets[i].username,'retweets':tweets[i].retweets, 'favorites':tweets[i].favorites,  'mentions':tweets[i].mentions,'hashtags':tweets[i].hashtags, 'geo':tweets[i].geo, 'permalink':tweets[i].permalink}
-	# 			writer.writerow({k:unicode(v).encode('utf-8') for k,v in d.items()})
+		creates a CSV file of tweets
+		'''
+		assert isinstance(tweets, list)
+		assert isinstance(filename, str)
+		with open(filename, 'w') as csvfile:
+		    fieldnames = ['username', 'text', 'date', 'mentions', 'hashtags', 'geo', 'retweets', 'favorites', 'id', 'permalink']
+		    writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=',', lineterminator='\n')
+		    writer.writeheader()
+		    print len(tweets)
+		    for i in range(len(tweets)):
+		        d = {'date':tweets[i].date, 'text':tweets[i].text, 'id':tweets[i].id, 'username':tweets[i].username,'retweets':tweets[i].retweets, 'favorites':tweets[i].favorites,  'mentions':tweets[i].mentions,'hashtags':tweets[i].hashtags, 'geo':tweets[i].geo, 'permalink':tweets[i].permalink}
+		        writer.writerow({k:unicode(v).encode('utf-8') for k,v in d.items()})
+		        # print '##', i, '## =', d
+	
+	# TODO - Fixes a tweet object given the raw version
+	@staticmethod
+	def parseTweets(tweet):
+		'''
+		param tweet: input
+		type tweet: tweet object
+		
+		returns a tweet object
+		'''
 
-
-
+		

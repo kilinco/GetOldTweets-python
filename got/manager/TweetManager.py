@@ -2,7 +2,7 @@ import json,sys,cookielib
 from pyquery import PyQuery
 from .. import models
 from . import TweetCriteria
-from . import TweetHelper
+from .TweetHelper import TweetHelper
 
 class TweetManager(object):
 	
@@ -31,7 +31,7 @@ class TweetManager(object):
 		active = True
 
 		while active:
-			json = got.manager.TweetHelper.getJsonResponse(tweetCriteria, refreshCursor, cookieJar, proxy)
+			json = TweetHelper().getJsonResponse(tweetCriteria, refreshCursor, cookieJar, proxy)
 			if len(json['items_html'].strip()) == 0:
 				break
 

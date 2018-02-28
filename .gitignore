@@ -1,4 +1,7 @@
 output_got.csv
+exam.csv
+example.csv
+setup.cfg
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

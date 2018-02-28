@@ -2,10 +2,45 @@
 # import unittest
 # from unittest.mock import MagicMock
 import csv
-import got
+from .. import manager
 
-# tweet_criteria = got.manager.TweetCriteria().setHashtagSearch("unitedairlines").setSince("2015-09-01").setUntil("2015-09-30").setMaxTweets(100)
-# tweets = got.manager.TweetManager.getTweets(tweet_criteria)
+# import unittest
+
+# # Here's our "unit".
+# def IsOdd(n):
+#     return n % 2 == 1
+
+# # Here's our "unit tests".
+# class IsOddTests(unittest.TestCase):
+
+#     def testOne(self):
+#         self.failUnless(IsOdd(1))
+
+#     def testTwo(self):
+#         self.failIf(IsOdd(2))
+
+# def main():
+#     unittest.main()
+
+# if __name__ == '__main__':
+#     main()
+
+# tweet_criteria = manager.TweetCriteria().setHashtagSearch("unitedairlines").setSince("2015-09-01").setUntil("2015-09-30").setMaxTweets(100)
+# tweets = manager.TweetManager.getTweets(tweet_criteria)
+# with open('exam.csv', 'w') as csvfile:
+#     fieldnames = ['username', 'text', 'date', 'mentions', 'hashtags', 'geo', 'retweets', 'favorites', 'id', 'permalink']
+#     writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=',', lineterminator='\n')
+#     writer.writeheader()
+#     print len(tweets)
+#     for i in range(len(tweets)):
+#         d = {'date':tweets[i].date, 'text':tweets[i].text, 'id':tweets[i].id, 'username':tweets[i].username,'retweets':tweets[i].retweets, 'favorites':tweets[i].favorites,  'mentions':tweets[i].mentions,'hashtags':tweets[i].hashtags, 'geo':tweets[i].geo, 'permalink':tweets[i].permalink}
+#         writer.writerow({k:unicode(v).encode('utf-8') for k,v in d.items()})
+#         print '##', i, '## =', d
+tweet_criteria = manager.TweetCriteria()
+tweet_criteria.setQuerySearch("UnitedAirlines").setMaxTweets(100)
+print tweet_criteria.querySearch
+tweets = manager.TweetManager().getTweets(tweet_criteria)
+manager.TweetHelper().getCSV(tweets, 'example.csv')
 # with open('exam.csv', 'w') as csvfile:
 #     fieldnames = ['username', 'text', 'date', 'mentions', 'hashtags', 'geo', 'retweets', 'favorites', 'id', 'permalink']
 #     writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=',', lineterminator='\n')
@@ -16,10 +51,7 @@ import got
 #         writer.writerow({k:unicode(v).encode('utf-8') for k,v in d.items()})
 #         print '##', i, '## =', d
 
-tweet_criteria = got.manager.TweetCriteria()
-tweet_criteria.setHashtagSearch("unitedairlines").setSince("2015-09-01").setUntil("2015-09-30").setMaxTweets(100)
-tweets = got.manager.TweetManager().getTweets(tweet_criteria)
-got.manager.TweetHelper().getCSV(tweets, 'example.csv')
+
 
 # tweet_gen = got.manager.TweetGenerator(tweet_criteria, noTweets=5)
 # with open('exam.csv', 'w') as csvfile:
