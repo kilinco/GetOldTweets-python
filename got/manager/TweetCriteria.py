@@ -1,8 +1,14 @@
+from itertools import chain
+
 class TweetCriteria(object):
 	
 	def __init__(self):
 		self.maxTweets = 0
 		self.within = "15mi"
+
+	def __str__(self):
+		strTwitCrit = "Search Query: "
+		return  strTwitCrit + str(self.__dict__)
 		
 	def setUsername(self, username):
 		self.username = username

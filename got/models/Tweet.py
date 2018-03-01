@@ -1,10 +1,14 @@
-class Tweet:
+class Tweet(object):
 	
 	def __init__(self):
-		pass
-
-	# TODO - Converts the object to a dictionary
-	def __dict__(self):
-		pass
+		self.id = ''
+		self.permalink = 'https://twitter.com' + ''
+		self.username = ''
+		self.text = ''
+		self.date = ''
+		self.retweets = ''
+		self.favorites = ''
+		self.mentions = []
+		self.hashtags = []
 
 

@@ -1,37 +1,20 @@
 import sys
-if sys.version_info[0] < 3:
-    import got
-    import tests
-else:
-    import got3 as got
+assert sys.version_info[0] < 3
+from got import manager
+import csv
 
 def main():
 
-	def printTweet(descr, t):
-		print(descr)
-		print("Username: %s" % t.username)
-		print("Retweets: %d" % t.retweets)
-		print("Text: %s" % t.text)
-		print("Mentions: %s" % t.mentions)
-		print("Hashtags: %s\n" % t.hashtags)
+	tweet_criteria = manager.TweetCriteria()
+	tweet_criteria.setQuerySearch("UnitedAirlines").setMaxTweets(100)
+	tweets = manager.TweetManager().getTweets(tweet_criteria)
+	print str(tweet_criteria)
+	for i in range(len(tweets)):
+	    #tweets[i] = TweetHelper.parseTweetText(tweets[i])
+	    d = {'date':tweets[i].date, 'text':tweets[i].text, 'id':tweets[i].id, 'username':tweets[i].username,'retweets':tweets[i].retweets, 'favorites':tweets[i].favorites, 'mentions':tweets[i].mentions,'hashtags':tweets[i].hashtags, 'geo':tweets[i].geo, 'permalink':tweets[i].permalink}
+	    print '##', i+1, '## =', d
+	manager.TweetHelper().getCSV(tweets, 'example.csv')
 
-	# Example 1 - Get tweets by username
-	tweetCriteria = got.manager.TweetCriteria().setUsername('barackobama').setMaxTweets(1)
-	tweet = got.manager.TweetManager.getTweets(tweetCriteria)[0]
-
-	printTweet("### Example 1 - Get tweets by username [barackobama]", tweet)
-
-	# Example 2 - Get tweets by query search
-	tweetCriteria = got.manager.TweetCriteria().setQuerySearch('europe refugees').setSince("2015-05-01").setUntil("2015-09-30").setMaxTweets(1)
-	tweet = got.manager.TweetManager.getTweets(tweetCriteria)[0]
-
-	printTweet("### Example 2 - Get tweets by query search [europe refugees]", tweet)
-
-	# Example 3 - Get tweets by username and bound dates
-	tweetCriteria = got.manager.TweetCriteria().setUsername("barackobama").setSince("2015-09-10").setUntil("2015-09-12").setMaxTweets(1)
-	tweet = got.manager.TweetManager.getTweets(tweetCriteria)[0]
-
-	printTweet("### Example 3 - Get tweets by username and bound dates [barackobama, '2015-09-10', '2015-09-12']", tweet)
 
 if __name__ == '__main__':
 	main()

@@ -8,6 +8,23 @@ class TweetHelper:
 	def __init__(self):
 		pass
 
+	# TODO - Fixes a tweet object given the raw version
+	@staticmethod
+	def parseTweetText(tweet, clearText = False):
+		'''
+		param tweet: input
+		type tweet: tweet object
+		
+		returns a tweet object
+		'''
+		assert isinstance(tweet, models.Tweet)
+		tweet.mentions = re.split(r'\W+', " ".join(re.compile('(?<=@\s)\w*').findall(tweet.text)))
+		tweet.hashtags = re.split(r'\W+', " ".join(re.compile('(?<=#\s)\w*').findall(tweet.text)))
+		if clearText:	
+			tweet.text = re.sub(re.compile('(@ \w*)'), '', tweet.text)
+			tweet.text = re.sub(re.compile('(# \w*)'), '', tweet.text)
+		return tweet	
+
 	@staticmethod
 	def parseTweet(tweetHTML):
 		'''
@@ -40,11 +57,11 @@ class TweetHelper:
 		tweet.date = datetime.datetime.fromtimestamp(dateSec)
 		tweet.retweets = retweets
 		tweet.favorites = favorites
-		tweet.mentions = " ".join(re.compile('(@\\w*)').findall(tweet.text))
-		tweet.hashtags = " ".join(re.compile('(#\\w*)').findall(tweet.text))
+		# tweet.mentions = " ".join(re.compile('(@\\w*)').findall(tweet.text))
+		# tweet.hashtags = " ".join(re.compile('(#\\w*)').findall(tweet.text))
 		tweet.geo = geo
 
-		return tweet
+		return TweetHelper.parseTweetText(tweet)
 
 	@staticmethod
 	def getJsonResponse(tweetCriteria, refreshCursor, cookieJar, proxy):
@@ -56,7 +73,6 @@ class TweetHelper:
 		returns JSON response with data from Twitter
 		'''
 		assert isinstance(tweetCriteria, TweetCriteria) 
-
 
 		url = "https://twitter.com/i/search/timeline?f=tweets&q=%s&src=typd&max_position=%s"
 		
@@ -135,18 +151,9 @@ class TweetHelper:
 		    writer.writeheader()
 		    print len(tweets)
 		    for i in range(len(tweets)):
-		        d = {'date':tweets[i].date, 'text':tweets[i].text, 'id':tweets[i].id, 'username':tweets[i].username,'retweets':tweets[i].retweets, 'favorites':tweets[i].favorites,  'mentions':tweets[i].mentions,'hashtags':tweets[i].hashtags, 'geo':tweets[i].geo, 'permalink':tweets[i].permalink}
-		        writer.writerow({k:unicode(v).encode('utf-8') for k,v in d.items()})
+		        writer.writerow({k:unicode(v).encode('utf-8') for k,v in tweets[i].__dict__.items()})
 		        # print '##', i, '## =', d
 	
-	# TODO - Fixes a tweet object given the raw version
-	@staticmethod
-	def parseTweets(tweet):
-		'''
-		param tweet: input
-		type tweet: tweet object
-		
-		returns a tweet object
-		'''
+
 
 		
