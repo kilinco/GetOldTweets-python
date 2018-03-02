@@ -1,4 +1,4 @@
-import urllib,urllib2,json,re,datetime,csv
+import urllib,urllib2,json,re,datetime,csv,cookielib,lxml.html
 from pyquery import PyQuery
 from .. import models
 from . import TweetCriteria
@@ -8,16 +8,18 @@ class TweetHelper:
 	def __init__(self):
 		pass
 
-	# TODO - Fixes a tweet object given the raw version
 	@staticmethod
 	def parseTweetText(tweet, clearText = False):
 		'''
+		Parses tweet text to get Hashtags and Mentions
+
 		param tweet: input
 		type tweet: tweet object
-		
-		returns a tweet object
+
+		returns a Tweet object
 		'''
 		assert isinstance(tweet, models.Tweet)
+		assert isinstance(clearText, bool)
 		tweet.mentions = re.split(r'\W+', " ".join(re.compile('(?<=@\s)\w*').findall(tweet.text)))
 		tweet.hashtags = re.split(r'\W+', " ".join(re.compile('(?<=#\s)\w*').findall(tweet.text)))
 		if clearText:	
@@ -28,15 +30,16 @@ class TweetHelper:
 	@staticmethod
 	def parseTweet(tweetHTML):
 		'''
-		param tweetHTML: input
-		type: string
-
 		parses the tweet's HTML to tweet model
-		'''
 
+		param tweetHTML: input
+		type: lxml.html.HtmlElement
+
+		returns a tweet object
+		'''
+		assert isinstance(tweetHTML, lxml.html.HtmlElement)
 		tweetPQ = PyQuery(tweetHTML)
 		tweet = models.Tweet()
-
 		usernameTweet = tweetPQ("span:first.username.u-dir b").text()
 		txt = re.sub(r"\s+", " ", tweetPQ("p.js-tweet-text").text().replace('# ', '#').replace('@ ', '@'))
 		retweets = int(tweetPQ("span.ProfileTweet-action--retweet span.ProfileTweet-actionCount").attr("data-tweet-stat-count").replace(",", ""))
@@ -57,8 +60,6 @@ class TweetHelper:
 		tweet.date = datetime.datetime.fromtimestamp(dateSec)
 		tweet.retweets = retweets
 		tweet.favorites = favorites
-		# tweet.mentions = " ".join(re.compile('(@\\w*)').findall(tweet.text))
-		# tweet.hashtags = " ".join(re.compile('(#\\w*)').findall(tweet.text))
 		tweet.geo = geo
 
 		return TweetHelper.parseTweetText(tweet)
@@ -73,7 +74,12 @@ class TweetHelper:
 		returns JSON response with data from Twitter
 		'''
 		assert isinstance(tweetCriteria, TweetCriteria) 
-
+		assert isinstance(cookieJar, cookielib.CookieJar)
+		assert isinstance(refreshCursor, str)
+		
+		if proxy != None:
+			assert isinstance(proxy, str)
+			
 		url = "https://twitter.com/i/search/timeline?f=tweets&q=%s&src=typd&max_position=%s"
 		
 		urlGetData = ''
@@ -132,7 +138,6 @@ class TweetHelper:
 		
 		return dataJson
 
-	# TODO - Will be simplified
 	@staticmethod
 	def getCSV(tweets, filename):
 		'''
@@ -149,10 +154,8 @@ class TweetHelper:
 		    fieldnames = ['username', 'text', 'date', 'mentions', 'hashtags', 'geo', 'retweets', 'favorites', 'id', 'permalink']
 		    writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=',', lineterminator='\n')
 		    writer.writeheader()
-		    print len(tweets)
 		    for i in range(len(tweets)):
 		        writer.writerow({k:unicode(v).encode('utf-8') for k,v in tweets[i].__dict__.items()})
-		        # print '##', i, '## =', d
 	
 
 
